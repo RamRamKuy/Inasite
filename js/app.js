@@ -1,6 +1,8 @@
 // ================== Navbar Toggle ==================
 const hamburger_menu = document.querySelector(".hamburger-menu");
 const navbar = document.querySelector("nav");
+const counters = document.querySelectorAll(".number");
+const speed = 200; // kecepatan animasi (semakin kecil makin cepat)
 
 function closeMenu() {
   navbar.classList.remove("open");
@@ -72,4 +74,32 @@ $(window).on("load", function () {
       filter: $(this).data("filter")
     });
   });
+});
+
+counters.forEach(counter => {
+  function updateCount() {
+    const target = +counter.getAttribute("data-num");
+    const count = +counter.innerText;
+
+    const increment = Math.ceil(target / speed);
+
+    if (count < target) {
+      counter.innerText = count + increment;
+      setTimeout(updateCount, 20);
+    } else {
+      counter.innerText = target;
+    }
+  }
+
+  // Jalankan animasi saat muncul di layar
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        updateCount();
+        observer.unobserve(counter);
+      }
+    });
+  }, { threshold: 0.5 });
+
+  observer.observe(counter);
 });
